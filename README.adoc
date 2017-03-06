@@ -1,0 +1,8 @@
+
+Builds a multi-release jar using Gradle, the example uses the code from
+http://in.relation.to/2017/02/13/building-multi-release-jars-with-maven/[Building Multi-Release JARs with Maven]
+by Gunnar Morling.
+
+Modify gradle.properties, setting the paths to Java 8 and Java 9 installs before building.
+
+Execute the tasks `java8ProcessId` and `java9ProcessId` to run the example under Java 8 and Java 9.

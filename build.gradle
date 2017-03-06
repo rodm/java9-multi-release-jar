@@ -1,0 +1,51 @@
+
+plugins {
+    id 'java'
+}
+
+ext {
+    java8Home = project.findProperty('java8.home') ?: '/opt/jdk1.8.0_121'
+    java9Home = project.findProperty('java9.home') ?: '/opt/jdk1.9.0'
+}
+
+sourceSets {
+    java9 {
+        compileClasspath += main.output
+    }
+}
+
+compileJava {
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+    options.fork = true
+    options.forkOptions.executable = "${java8Home}/bin/javac"
+}
+
+compileJava9Java {
+    sourceCompatibility = '1.9'
+    targetCompatibility = '1.9'
+    options.fork = true
+    options.forkOptions.executable = "${java9Home}/bin/javac"
+}
+
+jar {
+    dependsOn compileJava, compileJava9Java
+    baseName = "multi-release"
+    into('META-INF/versions/9') {
+        from compileJava9Java.destinationDir
+    }
+    manifest {
+        attributes('Main-Class': 'com.example.Main')
+        attributes('Multi-Release': 'true')
+    }
+}
+
+task java8ProcessId(type: Exec) {
+    dependsOn jar
+    commandLine "${java8Home}/bin/java", '-jar', "${buildDir}/libs/multi-release.jar"
+}
+
+task java9ProcessId(type: Exec) {
+    dependsOn jar
+    commandLine "${java9Home}/bin/java", '-jar', "${buildDir}/libs/multi-release.jar"
+}
